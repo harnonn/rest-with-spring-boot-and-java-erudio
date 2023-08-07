@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import ca.com.arnon.exeptions.ExceptionResponse;
 import ca.com.arnon.exeptions.RequiredObjectIsNullException;
 import ca.com.arnon.exeptions.ResourceNotFoundException;
+import ca.com.arnon.exeptions.WrongHttpMethodException;
 
 @ControllerAdvice
 @RestController
@@ -36,5 +37,9 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 
-	
+	@ExceptionHandler(WrongHttpMethodException.class)
+	public final ResponseEntity<ExceptionResponse> handleWrongHttpMethodException(Exception ex, WebRequest request) {
+		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+	}
 }
