@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
+
 import ca.com.arnon.exeptions.ExceptionResponse;
+import ca.com.arnon.exeptions.InvalidJwtAuthenticationException;
 import ca.com.arnon.exeptions.RequiredObjectIsNullException;
 import ca.com.arnon.exeptions.ResourceNotFoundException;
 import ca.com.arnon.exeptions.WrongHttpMethodException;
@@ -41,5 +44,17 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	public final ResponseEntity<ExceptionResponse> handleWrongHttpMethodException(Exception ex, WebRequest request) {
 		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(InvalidJwtAuthenticationException.class)
+	public final ResponseEntity<ExceptionResponse> handleInvalidJwtAuthenticationException(Exception ex, WebRequest request) {
+		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler(TokenExpiredException.class)
+	public final ResponseEntity<ExceptionResponse> handleTokenExpiredException(Exception ex, WebRequest request) {
+		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
