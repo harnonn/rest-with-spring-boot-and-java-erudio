@@ -20,7 +20,6 @@ public class BookVO extends RepresentationModel<BookVO> implements Serializable 
 	private Double price;
 
 	public BookVO() {
-		super();
 	}
 
 	public Long getId() {

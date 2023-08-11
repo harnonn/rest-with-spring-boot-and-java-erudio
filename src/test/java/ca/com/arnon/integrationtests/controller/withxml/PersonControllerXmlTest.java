@@ -1,4 +1,4 @@
-package ca.com.arnon.integrationtests.controller.withjson;
+package ca.com.arnon.integrationtests.controller.withxml;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import ca.com.arnon.configs.TestConfigs;
 import ca.com.arnon.integrationtests.testcontainers.AbstractIntegrationTest;
@@ -33,11 +33,12 @@ import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class PersonControllerJsonTest extends AbstractIntegrationTest{
+public class PersonControllerXmlTest extends AbstractIntegrationTest{
 	
 	private static RequestSpecification specification;
-	private static ObjectMapper objectMapper;
+	private static XmlMapper objectMapper;
 	private static PersonVO person;
+	private static String CONTENT_TYPE = TestConfigs.CONTENT_TYPE_XML;
 	
 	private void mockPerson() {
 		person.setFirstName("Richard");
@@ -48,7 +49,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest{
 	
 	@BeforeAll
 	public static void setup() {
-		objectMapper = new ObjectMapper();
+		objectMapper = new XmlMapper();
 		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		person = new PersonVO();
 		
@@ -61,7 +62,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest{
 		var accessToken = given()
 				.basePath("/auth/signin")
 				.port(TestConfigs.SERVER_PORT)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(CONTENT_TYPE)
+				.accept(CONTENT_TYPE)
 				.body(user)
 				.when()
 				.post()
@@ -69,7 +71,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest{
 				.statusCode(200)
 				.extract()
 				.body()
-				.as(TokenVO.class).getAccessToken();
+				.as(TokenVO.class)
+				.getAccessToken();
 		
 		specification = new RequestSpecBuilder()
 				.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer "+accessToken)
@@ -88,7 +91,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest{
 		mockPerson();
 		var content = given()
 				.spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(CONTENT_TYPE)
+				.accept(CONTENT_TYPE)
 				.body(person)
 				.when()
 				.post()
@@ -122,7 +126,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest{
 		
 		var content = given()
 				.spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(CONTENT_TYPE)
+				.accept(CONTENT_TYPE)
 				.body(person)
 				.when()
 				.post()
@@ -155,7 +160,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest{
 		
 		var content = given()
 				.spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(CONTENT_TYPE)
+				.accept(CONTENT_TYPE)
 				.header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_ERUDIO)
 				.pathParam("id", person.getId())
 				.when()
@@ -188,7 +194,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest{
 		
 		given()
 			.spec(specification)
-			.contentType(TestConfigs.CONTENT_TYPE_JSON)
+			.contentType(CONTENT_TYPE)
+			.accept(CONTENT_TYPE)
 			.pathParam("id", person.getId())
 			.when()
 			.delete("{id}")
@@ -203,7 +210,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest{
 		
 		var content = given()
 				.spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(CONTENT_TYPE)
+				.accept(CONTENT_TYPE)
 				.when()
 				.get()
 				.then()
@@ -253,7 +261,8 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest{
 		
 		given()
 			.spec(specificationWithoutToken)
-			.contentType(TestConfigs.CONTENT_TYPE_JSON)
+			.contentType(CONTENT_TYPE)
+			.accept(CONTENT_TYPE)
 			.when()
 			.get()
 			.then()
