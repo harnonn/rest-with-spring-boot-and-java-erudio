@@ -15,6 +15,7 @@ import ca.com.arnon.exeptions.ResourceNotFoundException;
 import ca.com.arnon.mapper.DozerMapper;
 import ca.com.arnon.model.Person;
 import ca.com.arnon.repositories.PersonRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class PersonServices {
@@ -64,6 +65,16 @@ public class PersonServices {
 		repository.save(entity);
 		var vo = DozerMapper.parseObject(entity, PersonVO.class);
 		vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel());
+		return vo;
+	}
+	
+	@Transactional
+	public PersonVO disablePerson(Long id) {
+		logger.info("Disabling one person!");
+		repository.disablePerson(id);
+		var entity = repository.findById(id).orElseThrow(()-> new ResourceNotFoundException("No records fond for this id"));
+		var vo = DozerMapper.parseObject(entity, PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
 		return vo;
 	}
 	
