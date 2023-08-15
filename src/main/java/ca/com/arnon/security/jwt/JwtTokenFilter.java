@@ -40,6 +40,8 @@ public class JwtTokenFilter extends GenericFilterBean{
 				if (auth != null) {
 					SecurityContextHolder.getContext().setAuthentication(auth);
 				}
+			} else if ( ((HttpServletRequest) request).getRequestURI().contains("/api/")){
+				throw new JWTDecodeException("No token found");
 			}
 			chain.doFilter(request, response);
 		} catch (JWTDecodeException e) {
