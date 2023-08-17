@@ -24,5 +24,6 @@ public class Startup {
 //		String result2 = passwordEncoder.encode("admin234");
 //		System.out.println("My hash result1 " + result1);
 //		System.out.println("My hash result2 " + result2);
+		
 	}
 }
