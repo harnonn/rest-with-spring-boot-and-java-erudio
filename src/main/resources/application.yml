@@ -1,7 +1,7 @@
 server:
-  port: 80
+  port: 8080
 cors:
-  originPatterns: http://localhost:3000,http://localhost:8080,https://erudio.com.br
+  originPatterns: http://localhost:3000,http://localhost,http://localhost:8080,http://3.144.168.192,http://harnonn.com
 file: 
   upload-dir: C:/Users/harno/Documents/files
 security:
